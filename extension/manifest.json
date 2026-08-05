@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Clip Downloader",
+  "version": "2.0",
+  "description": "Download YouTube clips with progress bar, always open in side panel.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "http://localhost:5000/",
+    "https://www.youtube.com/*"
+  ],
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "action": {
+    "default_title": "Open Clip Downloader"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

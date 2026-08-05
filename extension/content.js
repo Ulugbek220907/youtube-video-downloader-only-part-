@@ -1,0 +1,1 @@
+console.log('YouTube Clip Downloader content script loaded');

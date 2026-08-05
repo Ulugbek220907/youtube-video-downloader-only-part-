@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Clip Downloader</title>
+  <style>
+    body { width: 320px; padding: 16px; font-family: Arial, sans-serif; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select { width: 100%; padding: 6px; box-sizing: border-box; }
+    button { margin-top: 14px; width: 100%; padding: 8px; background: #ff0000; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    button:disabled { background: #888; cursor: not-allowed; }
+    #status { margin-top: 10px; font-size: 14px; color: #333; min-height: 20px; }
+    #progress { margin-top: 8px; height: 6px; background: #eee; border-radius: 3px; display: none; overflow: hidden; }
+    #progress-bar { height: 100%; width: 0%; background: #ff0000; border-radius: 3px; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+  <h2>YouTube Clip Downloader</h2>
+
+  <label for="startTime">Start Time (HH:MM:SS)</label>
+  <input type="text" id="startTime" placeholder="e.g. 0:30" value="0:00">
+
+  <label for="endTime">End Time (HH:MM:SS)</label>
+  <input type="text" id="endTime" placeholder="e.g. 1:45" value="1:00">
+
+  <label for="resolution">Resolution</label>
+  <select id="resolution">
+    <option value="360">360p</option>
+    <option value="480" selected>480p</option>
+    <option value="720">720p</option>
+    <option value="1080">1080p</option>
+  </select>
+
+  <button id="downloadBtn">Download Clip</button>
+  <div id="status">Ready</div>
+  <div id="progress"><div id="progress-bar"></div></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

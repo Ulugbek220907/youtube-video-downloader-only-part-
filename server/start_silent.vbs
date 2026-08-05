@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "python server.py", 0, False
