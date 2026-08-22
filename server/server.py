@@ -1,5 +1,4 @@
 import os
-import time
 import threading
 import uuid
 from urllib.parse import urlparse, parse_qs
@@ -30,7 +29,15 @@ def download_task(job_id, url, start_sec, end_sec, resolution, output_path):
     try:
         progress[job_id]['percent'] = 10
 
-        format_str = f'bestvideo[height<={resolution}]+bestaudio/best[height<={resolution}]'
+        # Build a format selector that picks the best video with height <= resolution,
+        # and then the best audio.
+        # The '+bestaudio/best' merges the best audio format.
+        # This ensures we get the highest quality within the limit.
+        format_string = f'bestvideo[height<={resolution}]+bestaudio/best'
+
+        # We'll also use format_sort to prefer your exact resolution if available,
+        # but the filter above already does the job.
+        sort_string = [f'res:{resolution}', '+size']
 
         def hook(d):
             if d['status'] == 'downloading':
@@ -43,26 +50,23 @@ def download_task(job_id, url, start_sec, end_sec, resolution, output_path):
                 progress[job_id]['percent'] = 95
 
         ydl_opts = {
-            'format': format_str,
+            'format': format_string,          # 👈 Primary selector
+            'format_sort': sort_string,       # 👈 Secondary refinement
             'merge_output_format': 'mp4',
             'outtmpl': output_path,
-            'verbose': False,
-            'quiet': True,
-            'no_warnings': True,
-            # 👇 USE COOKIES FROM BROWSER (gives higher rate limits)
-            'cookiefile': 'cookies.txt',   # 👈 Use static file
-            # 👇 FALLBACK to cookies.txt if browser fails
-            # 'cookiefile': 'cookies.txt',
+            'verbose': True,                  # Set to True to see selection in terminal
+            'quiet': False,
+            'no_warnings': False,
+            'cookiesfrombrowser': ('chrome',),
+            # 'cookiefile': 'cookies.txt',    # Uncomment if browser method fails
             'download_ranges': download_range_func(None, [(start_sec, end_sec)]),
             'force_keyframes_at_cuts': True,
-            # 👇 AGGRESSIVE SLEEP SETTINGS
-            'sleep_interval': 10,           # Wait 10 seconds before each download
-            'max_sleep_interval': 20,       # Random up to 20 seconds
-            'sleep_requests': 2,            # Wait 2 seconds between API requests
-            # 👇 RETRY SETTINGS
-            'retries': 5,                   # Retry up to 5 times on failure
-            'fragment_retries': 5,          # Retry fragments
-            # 👇 USE MULTIPLE PLAYER CLIENTS to avoid detection
+            # Rate limit protection
+            'sleep_interval': 10,
+            'max_sleep_interval': 20,
+            'sleep_requests': 2,
+            'retries': 5,
+            'fragment_retries': 5,
             'extractor_args': {
                 'youtube': {
                     'player_client': ['web', 'android', 'ios'],
@@ -73,7 +77,13 @@ def download_task(job_id, url, start_sec, end_sec, resolution, output_path):
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.extract_info(url, download=True)
+            # Extract info to see what format was selected (for debugging)
+            info = ydl.extract_info(url, download=False)
+            # Log the selected format
+            selected_format = info.get('requested_formats', [info.get('format')])[0]
+            print(f"Selected format: {selected_format.get('format_id')} - {selected_format.get('height')}p")
+            # Now download
+            ydl.download([url])
 
         if not os.path.exists(output_path):
             raise Exception('File was not created')
@@ -85,7 +95,7 @@ def download_task(job_id, url, start_sec, end_sec, resolution, output_path):
         error_msg = str(e)
         progress[job_id]['error'] = error_msg
         progress[job_id]['percent'] = -1
-        # 👇 DO NOT DELETE the file – keep it for debugging
+        # Do not delete the file – keep for debugging
         # if os.path.exists(output_path):
         #     os.remove(output_path)
         print(f"ERROR: {error_msg}")
