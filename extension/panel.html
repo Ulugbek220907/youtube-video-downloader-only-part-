@@ -4,23 +4,24 @@
   <meta charset="UTF-8">
   <title>YouTube Clip Downloader</title>
   <style>
-    body { width: 320px; padding: 16px; font-family: Arial, sans-serif; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select { width: 100%; padding: 6px; box-sizing: border-box; }
-    button { margin-top: 14px; width: 100%; padding: 8px; background: #ff0000; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    body { width: 100%; padding: 16px; font-family: Arial, sans-serif; box-sizing: border-box; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px; }
+    button { margin-top: 16px; width: 100%; padding: 10px; background: #ff0000; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; }
     button:disabled { background: #888; cursor: not-allowed; }
-    #status { margin-top: 10px; font-size: 14px; color: #333; min-height: 20px; }
-    #progress { margin-top: 8px; height: 6px; background: #eee; border-radius: 3px; display: none; overflow: hidden; }
-    #progress-bar { height: 100%; width: 0%; background: #ff0000; border-radius: 3px; transition: width 0.3s ease; }
+    #status { margin-top: 12px; font-size: 14px; color: #333; min-height: 20px; word-break: break-word; }
+    #progress { margin-top: 10px; height: 8px; background: #eee; border-radius: 4px; display: none; overflow: hidden; }
+    #progress-bar { height: 100%; width: 0%; background: #ff0000; border-radius: 4px; transition: width 0.3s ease; }
+    .hint { font-size: 12px; color: #666; margin-top: 4px; }
   </style>
 </head>
 <body>
-  <h2>YouTube Clip Downloader</h2>
+  <h2>🎬 YouTube Clip Downloader</h2>
 
-  <label for="startTime">Start Time (HH:MM:SS)</label>
+  <label for="startTime">Start Time (MM:SS or HH:MM:SS)</label>
   <input type="text" id="startTime" placeholder="e.g. 0:30" value="0:00">
 
-  <label for="endTime">End Time (HH:MM:SS)</label>
+  <label for="endTime">End Time (MM:SS or HH:MM:SS)</label>
   <input type="text" id="endTime" placeholder="e.g. 1:45" value="1:00">
 
   <label for="resolution">Resolution</label>
@@ -31,10 +32,9 @@
     <option value="1080">1080p</option>
   </select>
 
-  <button id="downloadBtn">Download Clip</button>
+  <button id="downloadBtn">⬇ Download Clip</button>
   <div id="status">Ready</div>
   <div id="progress"><div id="progress-bar"></div></div>
-
-  <script src="popup.js"></script>
+  <script src="panel.js"></script>
 </body>
 </html>
